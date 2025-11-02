@@ -1,7 +1,7 @@
-FROM ghcr.io/dodona-edu/dolos:latest
+FROM ghcr.io/dodona-edu/dolos-api:latest
 
-# Heroku will set PORT dynamically, but default to 3000 for local testing
+# Heroku will set PORT dynamically, Dolos API listens on process.env.PORT
 ENV PORT=${PORT:-3000}
 EXPOSE $PORT
 
-# Use the base image's default command (already configured to start Dolos)
+# The dolos-api image already has the correct CMD to start the web server
