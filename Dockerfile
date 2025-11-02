@@ -1,11 +1,17 @@
-# Dockerfile
 FROM ghcr.io/dodona-edu/dolos:latest
 
-# Heroku expects the app to listen on $PORT
-ENV PORT=3000
+# Create dir for wrapper
+USER root
+RUN mkdir -p /app/bin && chown -R node:node /app
+COPY bin/start-dolos.sh /app/bin/start-dolos.sh
+RUN chmod +x /app/bin/start-dolos.sh
 
-# Expose the port
+# Ensure we run as the node user if the base image expects that
+USER node
+
+# Make sure Heroku's $PORT is honored by the app (Dolos listens on process.env.PORT)
+ENV PORT=${PORT:-3000}
 EXPOSE 3000
 
-# Start Dolos (it will automatically use PORT from env)
-CMD ["npm", "start"]
+# Use the wrapper as the process that Heroku runs; wrapper forwards signals and exits properly
+CMD ["/app/bin/start-dolos.sh"]
